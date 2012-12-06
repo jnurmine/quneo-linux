@@ -53,6 +53,7 @@ def json2syx(preset, num):
     s.encode_crc(0x00)
     s.encode_crc(0x02)
     # 0x1110 = firmware, 0x2220 = preset
+    # 30xx = load preset xx
     s.encode_crc(0x22)
     s.encode_crc(0x20)
     s.encode_crc_int()
@@ -111,6 +112,31 @@ def json2syx(preset, num):
     s.flush()
     s.stop()
 
+    #print [hex(x) for x in s._buf]
+    return ''.join(struct.pack("B", x) for x in s._buf)
+
+
+def reload_preset(num):
+    s = SyxEncoder()
+    #print preset
+
+    s.start()
+    for magic in syx_ident_magic:
+        s.write(magic)
+    s.start_packet()
+    s.crc_init()
+    s.chunk_init()
+
+    # preamble
+    s.encode_crc(0x00)
+    s.encode_crc(0x02)
+    # 0x1110 = firmware, 0x2220 = preset
+    # 30xx = load preset xx
+    s.encode_crc(0x30)
+    s.encode_crc(0x00 + num)
+    s.encode_crc_int()
+    s.flush()
+    s.stop()
     #print [hex(x) for x in s._buf]
     return ''.join(struct.pack("B", x) for x in s._buf)
 

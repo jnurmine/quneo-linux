@@ -11,6 +11,7 @@ import struct
 import json
 
 from quneo.exporter import json2syx
+from quneo.exporter import reload_preset
 
 infile = open(sys.argv[1], "rb")
 in_json = json.load(infile)
@@ -26,3 +27,9 @@ print "Encoded %s bytes." % (len(binary))
 outfile = open("test.syx", "wb")
 outfile.write(binary)
 outfile.close()
+
+# you can reload the preset with this file
+pres = reload_preset(1)
+of = open("pres.syx", "wb")
+of.write(pres)
+of.close()
