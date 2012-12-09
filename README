@@ -8,7 +8,7 @@ Use File/Export to export a preset to a file (e.g. "example.json").
 
 To generate a SysEx file:
 
-python json2syx.py --preset_file example.json --num 1
+python quneo-linux.py --preset_file example.json --num 1
 
 This will create, by default, a file called "preset.syx".
 The file also contains the preset refresh part.
