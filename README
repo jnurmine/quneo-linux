@@ -1,0 +1,56 @@
+Loading presets to the QuNeo
+============================
+
+First, you need a single preset in json format.
+This can be done with the Windows QuNeo Editor. You need to run it under Wine.
+
+Use File/Export to export a preset to a file (e.g. "example.json").
+
+To generate a SysEx file:
+
+python json2syx.py --preset_file example.json --num 1
+
+This will create, by default, a file called "preset.syx".
+The file also contains the preset refresh part.
+Thus when loading the preset it will:
+  1. overwrite preset number 1
+  2. refresh QuNeo internally to make the new preset active
+
+To load it to the QuNeo, do something like this:
+
+Connect the QuNeo.
+
+cat output.syx > /dev/snd/midiC2D0
+
+That's it! Your new preset is in the QuNeo.
+
+Quick checking your presets
+===========================
+
+To check/debug your presets, a simple scanner tool called midiscan.py is
+provided:
+
+python midiscan.py /dev/snd/midiC2D0
+
+Then press buttons on the QuNeo. NOTE: The scanner is just a very simple tool.
+
+Press CTRL-C to exit the midiscan.py.
+
+Example output after loading the firmware preset #16:
+
+Using ALSA MIDI device /dev/snd/midiC2D0
+Hit ctrl-C to stop
+
+[1] Note On: note=12 velocity=118
+[1] Note Off: note=12 velocity=0
+[1] Note On: note=13 velocity=118
+[1] Note Off: note=13 velocity=0
+[1] Note On: note=14 velocity=99
+[1] Note Off: note=14 velocity=0
+...
+
+In the future there will hopefully be a proper editor for Linux.
+
+Cheers!
+slinky@iki.fi
+Sun Dec  9 23:30:21 CET 2012
