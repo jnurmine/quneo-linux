@@ -6,6 +6,8 @@
 # copyright 2012 Keith McMillen Instruments
 # original author - daniel mcanulty <dan@keithmcmillen.com>
 
+# Encode data to QuNeo SysEx format
+
 class SyxEncoder:
     SX_ENCODE_LEN = 7
     SX_START = 0xf0
@@ -35,9 +37,9 @@ class SyxEncoder:
             self.write(self.midi_hi_bits)
 
     def sum_encode(self, a):
+        self.encode_crc(a)
         if a < 0:
             a += 256
-        self.encode_crc(a)
         self.sum_byte += a
         self.sum_byte &= 0xff
 

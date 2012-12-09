@@ -6,7 +6,7 @@
 # copyright 2012 Keith McMillen Instruments
 # original author - daniel mcanulty <dan@keithmcmillen.com>
 
-# for firmware 1.1.x
+# structs for firmware 1.1.x
 # the order is relevant
 
 pads = [
