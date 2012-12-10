@@ -1,3 +1,5 @@
+IMPORTANT: Use only with firmware 1.1
+
 Loading presets to the QuNeo
 ============================
 
@@ -16,7 +18,8 @@ Thus when loading the preset it will:
   1. overwrite preset number 1
   2. refresh QuNeo internally to make the new preset active
 
-To load it to the QuNeo, do something like this:
+To load it to the QuNeo, give a proper --device (e.g. /dev/snd/midiC2D0), or do
+something like this:
 
 Connect the QuNeo.
 
