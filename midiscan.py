@@ -1,6 +1,6 @@
 #!/bin/env python
 # -*- coding: iso-8859-15 -*-
-# (C) 2012 J. Nurminen <slinky@iki.fi>
+# (C) 2012-2015 J. Nurminen <slinky@iki.fi>
 
 # a simple MIDI message scanner
 
@@ -9,7 +9,7 @@ import sys
 from simplemidi.messages import *
 
 # messages we want to scan for
-msgs = [ControlChange(), ProgramChange(), \
+msgs = [SysexUniversal(), ControlChange(), ProgramChange(), \
         NoteOn(), NoteOff(), PitchWheel(), \
         UnknownMessage()]
 
