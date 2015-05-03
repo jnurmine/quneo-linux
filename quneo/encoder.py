@@ -105,7 +105,3 @@ class SyxEncoder:
     def crc_init(self):
         self.crc = 0xffff
 
-    def line_init(self):
-        self.crc_init()
-        self.chunk_init()
-
