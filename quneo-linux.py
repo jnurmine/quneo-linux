@@ -14,7 +14,7 @@ import argparse
 from quneo.exporter import json2syx
 from quneo.exporter import reload_preset, query_sysex_id, query_sysex_preset
 
-parser = argparse.ArgumentParser(description="KMI Quneo preset tool")
+parser = argparse.ArgumentParser(description="KMI Quneo preset tool for Linux")
 subparsers = parser.add_subparsers(help="help for subcommand, subcommand --help", dest="subcommand")
 
 parser_debug = subparsers.add_parser("debug", help="debugging options (use at your own risk)")
