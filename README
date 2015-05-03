@@ -1,21 +1,25 @@
-IMPORTANT: Use only with firmware 1.1
+IMPORTANT: Use only with firmware 1.2.x (files from editor 1.2.4)
 
 Loading presets to the QuNeo
 ============================
 
-First, you need a single preset in json format.
-This can be done with the Windows QuNeo Editor. You need to run it under Wine.
+Use the presets in the presets_1.2.3 subdirectory, or make your own (e.g. with File/Export from another editor).
+To generate a SysEx file, e.g. from QuNeo_FactoryPresets.json second preset (zero-based so index is 1):
 
-Use File/Export to export a preset to a file (e.g. "example.json").
+$ python quneo-linux.py --output example.syx preset --preset_file presets_1.2.3/QuNeo_FactoryPresets.json --in 1
 
-To generate a SysEx file:
+You will see the following output:
 
-python quneo-linux.py --preset_file example.json --num 1
+NOTE: No device given, will write to file example.syx
+NOTE: No output preset defined, using 0.
+Processing preset: "Drum E2-G3"
+Stored as preset 0
+Preset size 1515 bytes.
+Wrote to example.syx
 
-This will create, by default, a file called "preset.syx".
-The file also contains the preset refresh part.
-Thus when loading the preset it will:
-  1. overwrite preset number 1
+The file "example.syx" was created, it also contains a section to load the
+preset. Thus when loading the preset it will:
+  1. overwrite preset number 0
   2. refresh QuNeo internally to make the new preset active
 
 To load it to the QuNeo, give a proper --device (e.g. /dev/snd/midiC2D0), or do
@@ -27,6 +31,16 @@ cat output.syx > /dev/snd/midiC2D0
 
 That's it! Your new preset is in the QuNeo.
 
+To change the target preset, use a parameter such as "--out 5".
+
+
+To get help
+===========
+
+python quneo-linux.py debug --help
+python quneo-linux.py preset --help
+
+
 Quick checking your presets
 ===========================
 
@@ -35,7 +49,8 @@ provided:
 
 python midiscan.py /dev/snd/midiC2D0
 
-Then press buttons on the QuNeo. NOTE: The scanner is just a very simple tool.
+Then press buttons on the QuNeo.
+NOTE: The scanner is just a very simple tool.
 
 Press CTRL-C to exit the midiscan.py.
 
@@ -52,8 +67,13 @@ Hit ctrl-C to stop
 [1] Note Off: note=14 velocity=0
 ...
 
-In the future there will hopefully be a proper editor for Linux.
+You can also run the midiscan.py while sending other commands, such as Sysex.
+
+Parting words
+=============
+
+Special thanks to KMI support and their forum members, especially elmquist.
 
 Cheers!
 slinky@iki.fi
-Sun Dec  9 23:30:21 CET 2012
+Sun May  3 13:29:50 CEST 2015

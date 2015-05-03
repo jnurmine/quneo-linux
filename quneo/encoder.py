@@ -1,6 +1,6 @@
 #!/bin/env python
 # -*- coding: iso-8859-15 -*-
-# Python version (C) 2012 J. Nurminen <slinky@iki.fi>
+# Python version (C) 2012-2015 J. Nurminen <slinky@iki.fi>
 
 # based on "sysexCompiler_1.1.x_ForumRelease" 
 # copyright 2012 Keith McMillen Instruments
@@ -19,6 +19,7 @@ class SyxEncoder:
         self.sum_byte = 0
         self._buf = []
         self.chunk_init()
+        self.counter = 0
 
     def chunk_init(self):
         self.midi_hi_bits = 0
@@ -26,31 +27,37 @@ class SyxEncoder:
 
     def write(self, val):
         self._buf.append(val)
+        self.counter += 1
+
+    def reset_counter(self):
+        self.counter = 0
 
     def encode(self, val):
+        self.write(val & 0x7f)
         self.midi_hi_bits |= (val & 0x80)
         self.midi_hi_bits >>= 1
-        self.write(val & 0x7f)
         self.midi_hi_count += 1
         if self.midi_hi_count == self.SX_ENCODE_LEN:
             self.midi_hi_count = 0
             self.write(self.midi_hi_bits)
+            # the encoded byte is not counted in data length
+            self.counter -= 1
 
     def sum_encode(self, a):
+        a &= 0xff
+        assert a >= 0  # yes, I'm sure
         self.encode_crc(a)
-        if a < 0:
-            a += 256
         self.sum_byte += a
         self.sum_byte &= 0xff
 
     def encode_crc_int(self):
         val = self.crc
-        self.encode_crc(val >> 8)
+        self.encode_crc((val >> 8) & 0xff)
         self.encode_crc(val & 0xff)
 
     def encode_int(self, val):
-        self.encode(val >> 8)
-        self.encode(val)
+        self.encode((val >> 8) & 0xff)
+        self.encode(val & 0xff)
 
     def encode_crc(self, val):
         self.crc_byte(val)
@@ -76,6 +83,7 @@ class SyxEncoder:
         self.write(self.SX_END)
 
     def crc_byte(self, val):
+        val &= 0xff
         crc = self.crc
         temp = (crc >> 8) ^ val
         crc &= 0xffff

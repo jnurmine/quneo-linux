@@ -1,203 +1,145 @@
 #!/bin/env python
 # -*- coding: iso-8859-15 -*-
-# Python version (C) 2012 J. Nurminen <slinky@iki.fi>
+# Python version (C) 2012-2015 J. Nurminen <slinky@iki.fi>
 
 # based on "sysexCompiler_1.1.x_ForumRelease" 
 # copyright 2012 Keith McMillen Instruments
 # original author - daniel mcanulty <dan@keithmcmillen.com>
 
-# structs for firmware 1.1.x
-# the order is relevant
+# structs for firmware 1.2.x
+# the order is relevant!!!
+
+
+TRANSPORT_BUTTONS = "TransportButtons"
+PADS = "Pads"
+LR_BUTTONS = "LeftRightButtons"
+ROTARIES = "Rotaries"
+LONG_SLIDERS = "LongSliders"
+H_SLIDERS = "HSliders"
+V_SLIDERS = "VSliders"
+UD_BUTTONS = "UpDownButtons"
+RHOMBUS_BUTTONS = "RhombusButtons"
+MODE_BUTTONS = "ModeButtons"
 
 pads = [
         "enableGrid",
         "padChannel",
         "outDmNote",
+        "outDmNotePressMode",
         "outDmPress",
-        "outDmVelocity",
+        "outDmPressValue",
+        "outDmVelocityValue",
         "outDmXCC",
         "outDmXYReturn",
+        "outDmXReturn",
         "outDmYCC",
+        "outDmYReturn",
         "padSensitivityPerPad",
 
+        # NOTE: this is shared. supports
+        # multiple channels in the pad grid
+        # if supported by the editor?
         "padChannel",
         "outGmNoteNW",
+        "outGmNotePressModeNW",
         "outGmPressNW",
-        "outGmVelocityNW",
+        "outGmPressValueNW",
+        "outGmVelocityValueNW",
 
         "padChannel",
         "outGmNoteNE",
+        "outGmNotePressModeNE",
         "outGmPressNE",
-        "outGmVelocityNE",
+        "outGmPressValueNE",
+        "outGmVelocityValueNE",
 
         "padChannel",
         "outGmNoteSE",
+        "outGmNotePressModeSE",
         "outGmPressSE",
-        "outGmVelocitySE",
+        "outGmPressValueSE",
+        "outGmVelocityValueSE",
 
         "padChannel",
         "outGmNoteSW",
+        "outGmNotePressModeSW",
         "outGmPressSW",
-        "outGmVelocitySW",
-        ]
-
-rotaries = [
-        "rB1Channel",
-        "rB1outLocation",
-        "rB1outNote",
-        "rB1outPress",
-        "rB1outVelocity",
-        "rB1outLocPassThruRange",
-
-        "rB1outDirection",
-        "rB1outDirectionEnable",
-        "rB1outSpeed",
-
-        "rB2Channel",
-        "rB2outLocation",
-        "rB2outNote",
-        "rB2outPress",
-        "rB2outVelocity",
-        "rB2outLocPassThruRange",
-
-        "rB2outDirection",
-        "rB2outDirectionEnable",
-        "rB2outSpeed",
-
-        "rB3Channel",
-        "rB3outLocation",
-        "rB3outNote",
-        "rB3outPress",
-        "rB3outVelocity",
-        "rB3outLocPassThruRange",
-
-        "rB3outDirection",
-        "rB3outDirectionEnable",
-        "rB3outSpeed",
-
-        "rB4Channel",
-        "rB4outLocation",
-        "rB4outNote",
-        "rB4outPress",
-        "rB4outVelocity",
-        "rB4outLocPassThruRange",
-
-        "rB4outDirection",
-        "rB4outDirectionEnable",
-        "rB4outSpeed",
-        ]
-
-longsliders = [
-        "lB1Channel",
-        "lB1outLocation",
-        "lB1outNote",
-        "lB1outPress",
-        "lB1outVelocity",
-        "lB1outLocPassThruRange",
-
-        "lB1outWidth",
-
-        "lB2Channel",
-        "lB2outLocation",
-        "lB2outNote",
-        "lB2outPress",
-        "lB2outVelocity",
-        "lB2outLocPassThruRange",
-
-        "lB2outWidth",
-
-        "lB3Channel",
-        "lB3outLocation",
-        "lB3outNote",
-        "lB3outPress",
-        "lB3outVelocity",
-        "lB3outLocPassThruRange",
-
-        "lB3outWidth",
-
-        "lB4Channel",
-        "lB4outLocation",
-        "lB4outNote",
-        "lB4outPress",
-        "lB4outVelocity",
-        "lB4outLocPassThruRange",
-
-        "lB4outWidth",
+        "outGmPressValueSW",
+        "outGmVelocityValueSW",
         ]
 
 
-hsliders = [
-        "hB1Channel",
-        "hB1outLocation",
-        "hB1outNote",
-        "hB1outPress",
-        "hB1outVelocity",
-        "hB1outLocPassThruRange",
+def build_rotaries():
+    # repepetititition helper
+    rotaries = []
+    rotary_params = ["Channel", "outLocation", "outNote", "outNotePressMode",
+            "outPress", "outPressValue", "outVelocityValue",
+            "outLocPassThruRange", "outDirection", "outDirectionEnable",
+            "outSpeed"]
 
-        "hB2Channel",
-        "hB2outLocation",
-        "hB2outNote",
-        "hB2outPress",
-        "hB2outVelocity",
-        "hB2outLocPassThruRange",
+    for bank in xrange(1, 5):
+        for parameter in rotary_params:
+            rotaries.append("rB%s%s" % (bank, parameter))
+    return rotaries
 
-        "hB3Channel",
-        "hB3outLocation",
-        "hB3outNote",
-        "hB3outPress",
-        "hB3outVelocity",
-        "hB3outLocPassThruRange",
+def build_longsliders():
+    # repepetititition helper
+    longsliders = []
+    longslider_params = [
+            "Channel", "outLocation", "outNote", "outNotePressMode",
+            "outPress", "outPressValue", "outVelocityValue",
+            "outLocPassThruRange", "outWidth"]
 
-        "hB4Channel",
-        "hB4outLocation",
-        "hB4outNote",
-        "hB4outPress",
-        "hB4outVelocity",
-        "hB4outLocPassThruRange",
-        ]
+    for bank in xrange(1,5):
+        for parameter in longslider_params:
+            longsliders.append("lB%s%s" % (bank, parameter))
+    return longsliders
 
-vsliders = [
-        "vB1Channel",
-        "vB1outLocation",
-        "vB1outNote",
-        "vB1outPress",
-        "vB1outVelocity",
-        "vB1outLocPassThruRange",
 
-        "vB2Channel",
-        "vB2outLocation",
-        "vB2outNote",
-        "vB2outPress",
-        "vB2outVelocity",
-        "vB2outLocPassThruRange",
+def build_hsliders():
+    # repepetititition helper
+    hsliders = []
+    hslider_params = [
+            "Channel", "outLocation", "outNote", "outNotePressMode",
+            "outPress", "outPressValue", "outVelocityValue",
+            "outLocPassThruRange"]
 
-        "vB3Channel",
-        "vB3outLocation",
-        "vB3outNote",
-        "vB3outPress",
-        "vB3outVelocity",
-        "vB3outLocPassThruRange",
+    for bank in xrange(1,5):
+        for parameter in hslider_params:
+            hsliders.append("hB%s%s" % (bank, parameter))
+    return hsliders
 
-        "vB4Channel",
-        "vB4outLocation",
-        "vB4outNote",
-        "vB4outPress",
-        "vB4outVelocity",
-        "vB4outLocPassThruRange",
-        ]
+
+def build_vsliders():
+    # repepetititition helper
+    vsliders = []
+    vslider_params = [
+            "Channel", "outLocation", "outNote", "outNotePressMode",
+            "outPress", "outPressValue", "outVelocityValue",
+            "outLocPassThruRange"]
+
+    for bank in xrange(1,5):
+        for parameter in vslider_params:
+            vsliders.append("vB%s%s" % (bank, parameter))
+    return vsliders
+
 
 lrswitches = [
         "leftrightEnableSwitch",
 
         "leftrightChannel",
         "leftrightLOutNote",
+        "leftrightLOutNotePressMode",
         "leftrightLOutPress",
-        "leftrightLOutVelocity",
+        "leftrightLOutPressValue",
+        "leftrightLOutVelocityValue",
 
         "leftrightChannel",
         "leftrightROutNote",
+        "leftrightROutNotePressMode",
         "leftrightROutPress",
-        "leftrightROutVelocity",
+        "leftrightROutPressValue",
+        "leftrightROutVelocityValue",
         ]
 
 udswitches = [
@@ -206,14 +148,17 @@ udswitches = [
 
         "updownChannel",
         "updownUOutNote",
+        "updownUOutNotePressMode",
         "updownUOutPress",
-        "updownUOutVelocity",
-
+        "updownUOutPressValue",
+        "updownUOutVelocityValue",
 
         "updownChannel",
         "updownDOutNote",
+        "updownDOutNotePressMode",
         "updownDOutPress",
-        "updownDOutVelocity",
+        "updownDOutPressValue",
+        "updownDOutVelocityValue",
         ]
 
 rhswitches = [
@@ -221,22 +166,26 @@ rhswitches = [
         "rhombusBankControl",
         "rhombusInNoteG",
         "rhombusInNoteR",
-
         "rhombusChannel",
+
         "rhombusOutNote",
+        "rhombusOutNotePressMode",
         "rhombusOutPress",
-        "rhombusOutVelocity",
+        "rhombusOutPressValue",
+        "rhombusOutVelocityValue",
         ]
 
 tbuttons = [
         "transportChannel",
         "transportOutNote",
+        "transportOutNotePressMode",
         "transportOutPress",
-        "transportOutVelocity",
+        "transportOutPressValue",
+        "transportOutVelocityValue",
         ]
 
 mswitches = [
-        "modeOutVelocity",
+        "modeOutVelocityValue",
         "modeEnableSwitch",
         "modeChannel",
         "modeOutNote",
@@ -244,49 +193,72 @@ mswitches = [
         ]
 
 globalpaths = [
+        [PADS,'padBankChangeMode'],
+
+        # input channels
+        [H_SLIDERS,'hSliderInChannel'],
+        [LR_BUTTONS,'leftrightInChannel'],
+        [LONG_SLIDERS,'lSliderInChannel'],
+        [PADS, 'padDrumInChannel'],
+        [PADS, 'padGridDiscreteInChannel'],
+        [PADS, 'padGridDualInChannel'],
+        [RHOMBUS_BUTTONS, 'rhombusInChannel'],
+        [ROTARIES, 'rotaryInChannel'],
+        [TRANSPORT_BUTTONS, 'transportInChannel'],
+        [UD_BUTTONS, 'updownInChannel'],
+        [V_SLIDERS, 'vSliderInChannel'],
+
+        # transpose intervals
+        [PADS,'bank1TransposeInterval'],
+        [PADS,'bank2TransposeInterval'],
+        [PADS,'bank3TransposeInterval'],
+        [PADS,'bank4TransposeInterval'],
+
         # thresholds
-        ['VSliders','vSliderOffThreshold'],
-        ['VSliders','vSliderOnThreshold'],
-        ['UpDownButtons','updownOffThreshold'],
-        ['UpDownButtons','updownOnThreshold'],
-        ['TransportButtons','transportOffThreshold'],
-        ['TransportButtons','transportOnThreshold'],
-        ['Rotaries','rotaryOffThreshold'],
-        ['Rotaries','rotaryOnThreshold'],
-        ['RhombusButtons','rhombusOffThreshold'],
-        ['RhombusButtons','rhombusOnThreshold'],
-        ['ModeButtons','modeOffThreshold'],
-        ['ModeButtons','modeOnThreshold'],
-        ['LongSliders','lSliderOffThreshold'],
-        ['LongSliders','lSliderOnThreshold'],
-        ['LeftRightButtons','leftrightOffThreshold'],
-        ['LeftRightButtons','leftrightOnThreshold'],
-        ['HSliders','hSliderOffThreshold'],
-        ['HSliders','hSliderOnThreshold'],
-        ['Pads','padOffset'],
-        ['Pads','padOffThreshold'],
-        ['Pads','padOnThreshold'],
-        ['Pads','cornerIsolation'],
+        [V_SLIDERS,'vSliderOffThreshold'],
+        [V_SLIDERS,'vSliderOnThreshold'],
+        [UD_BUTTONS,'updownOffThreshold'],
+        [UD_BUTTONS,'updownOnThreshold'],
+        [TRANSPORT_BUTTONS,'transportOffThreshold'],
+        [TRANSPORT_BUTTONS,'transportOnThreshold'],
+        [ROTARIES,'rotaryOffThreshold'],
+        [ROTARIES,'rotaryOnThreshold'],
+        [RHOMBUS_BUTTONS,'rhombusOffThreshold'],
+        [RHOMBUS_BUTTONS,'rhombusOnThreshold'],
+        [MODE_BUTTONS,'modeOffThreshold'],
+        [MODE_BUTTONS,'modeOnThreshold'],
+        [LONG_SLIDERS,'lSliderOffThreshold'],
+        [LONG_SLIDERS,'lSliderOnThreshold'],
+        [LR_BUTTONS,'leftrightOffThreshold'],
+        [LR_BUTTONS,'leftrightOnThreshold'],
+        [H_SLIDERS,'hSliderOffThreshold'],
+        [H_SLIDERS,'hSliderOnThreshold'],
+        [PADS,'padOffset'],
+        [PADS,'padOffThreshold'],
+        [PADS,'padOnThreshold'],
+        [PADS,'cornerIsolation'],
+
         # sensitivities
-        ['Pads','padSensitivity'],
-        ['Rotaries','rotarySensitivity'],
-        ['LongSliders','lSliderSensitivity'],
-        ['HSliders','hSliderSensitivity'],
-        ['VSliders','vSliderSensitivity'],
-        ['LeftRightButtons','leftrightSensitivity'],
-        ['UpDownButtons','updownSensitivity'],
-        ['RhombusButtons','rhombusSensitivity'],
-        ['TransportButtons','transportSensitivity'],
-        ['ModeButtons','modeSensitivity'],
+        [PADS,'padSensitivity'],
+        [ROTARIES,'rotarySensitivity'],
+        [LONG_SLIDERS,'lSliderSensitivity'],
+        [H_SLIDERS,'hSliderSensitivity'],
+        [V_SLIDERS,'vSliderSensitivity'],
+        [LR_BUTTONS,'leftrightSensitivity'],
+        [UD_BUTTONS,'updownSensitivity'],
+        [RHOMBUS_BUTTONS,'rhombusSensitivity'],
+        [TRANSPORT_BUTTONS,'transportSensitivity'],
+        [MODE_BUTTONS,'modeSensitivity'],
+
         # LED controls
-        ['Pads','localLEDControl'],
-        ['Rotaries','rotaryLocalLEDControl'],
-        ['LongSliders','lSliderLocalLEDControl'],
-        ['HSliders','hSliderLocalLEDControl'],
-        ['VSliders','vSliderLocalLEDControl'],
-        ['LeftRightButtons','leftrightLocalLEDControl'],
-        ['UpDownButtons','updownLocalLEDControl'],
-        ['RhombusButtons','rhombusLocalLEDControl'],
-        ['TransportButtons','transportLocalLEDControl'],
-        ['ModeButtons','modeLocalLEDControl'],
+        [PADS,'localLEDControl'],
+        [ROTARIES,'rotaryLocalLEDControl'],
+        [LONG_SLIDERS,'lSliderLocalLEDControl'],
+        [H_SLIDERS,'hSliderLocalLEDControl'],
+        [V_SLIDERS,'vSliderLocalLEDControl'],
+        [LR_BUTTONS,'leftrightLocalLEDControl'],
+        [UD_BUTTONS,'updownLocalLEDControl'],
+        [RHOMBUS_BUTTONS,'rhombusLocalLEDControl'],
+        [TRANSPORT_BUTTONS,'transportLocalLEDControl'],
+        [MODE_BUTTONS,'modeLocalLEDControl'],
         ]
